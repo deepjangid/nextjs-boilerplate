@@ -61,8 +61,6 @@ function Particles() {
   );
 }
 
-
-
 // ─── Simple torus rings ───────────────────────────────────────────────────────
 function TechRings() {
   const ref = useRef<THREE.Group>(null);

@@ -6,6 +6,8 @@ import dynamic from 'next/dynamic';
 const Scene        = dynamic(() => import('./scene'),         { ssr: false });
 const ContactScene = dynamic(() => import('./contact'), { ssr: false });
 import AboutPage   from './about';
+import ProjectsPage from './projects';
+import SkillsPage from './skills';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Custom cursor
@@ -268,11 +270,10 @@ function EmailPanel() {
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {[
-            { label: 'GitHub',   href: '#', color: '#e2e8f0' },
-            { label: 'LinkedIn', href: '#', color: '#0a66c2' },
-            { label: 'Twitter',  href: '#', color: '#1d9bf0' },
-          ].map(({ label, color }) => (
-            <SocialBtn key={label} label={label} color={color} />
+            { label: 'GitHub',   href: 'https://github.com/deepjangid', color: '#e2e8f0' },
+            { label: 'LinkedIn', href: 'https://www.linkedin.com/in/deepak-kumar-432889148/', color: '#0a66c2' },
+          ].map(({ label, href, color }) => (
+            <SocialBtn key={label} label={label} href={href} color={color} />
           ))}
         </div>
       </div>
@@ -295,10 +296,11 @@ function EmailPanel() {
   );
 }
 
-function SocialBtn({ label, color }: { label: string; color: string }) {
+function SocialBtn({ label, href, color }: { label: string; href: string; color: string }) {
   const [h, setH] = useState(false);
   return (
     <button
+      onClick={() => window.open(href, '_blank', 'noopener,noreferrer')}
       onMouseEnter={() => setH(true)}
       onMouseLeave={() => setH(false)}
       style={{
@@ -506,7 +508,7 @@ function NavLink({ label, onClick }: { label: string; onClick?: () => void }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Root page — manages view state + warp transition
 // ─────────────────────────────────────────────────────────────────────────────
-type View = 'home' | 'contact' | 'about';
+type View = 'home' | 'contact' | 'about' | 'skills' | 'projects';
 
 export default function Home() {
   const [visible, setVisible] = useState(false);
@@ -523,9 +525,11 @@ export default function Home() {
     setView(next);
   }, [view]);
 
-  const goContact = useCallback(() => navigate('contact'), [navigate]);
-  const goAbout   = useCallback(() => navigate('about'),   [navigate]);
-  const goHome    = useCallback(() => navigate('home'),    [navigate]);
+  const goContact  = useCallback(() => navigate('contact'),  [navigate]);
+  const goAbout    = useCallback(() => navigate('about'),    [navigate]);
+  const goSkills   = useCallback(() => navigate('skills'),   [navigate]);
+  const goProjects = useCallback(() => navigate('projects'), [navigate]);
+  const goHome     = useCallback(() => navigate('home'),     [navigate]);
 
   const socialMedia = [
     {
@@ -567,9 +571,10 @@ id: 'linkedIn', label: 'LinkedIn', href: 'https://www.linkedin.com/in/deepak-kum
               <span style={{ color:'rgba(255,255,255,0.25)' }}>//</span> Deepak Jangid
             </div>
             <div style={{ display:'flex', gap:'2.2rem' }}>
-              <NavLink label="About"   onClick={goAbout} />
-              {['Projects','Skills'].map(l => <NavLink key={l} label={l} />)}
-              <NavLink label="Contact" onClick={goContact} />
+              <NavLink label="About"    onClick={goAbout} />
+              <NavLink label="Projects" onClick={goProjects} />
+              <NavLink label="Skills"   onClick={goSkills} />
+              <NavLink label="Contact"  onClick={goContact} />
             </div>
             <div style={{ display:'flex', alignItems:'center', gap:7, fontFamily:'var(--font-mono)', fontSize:'0.66rem', color:'rgba(255,255,255,0.35)', letterSpacing:'0.08em' }}>
               <span style={{ width:6, height:6, borderRadius:'50%', background:'#00ff88', boxShadow:'0 0 6px #00ff88', display:'inline-block', animation:'blink 2.4s ease-in-out infinite' }} />
@@ -590,7 +595,9 @@ id: 'linkedIn', label: 'LinkedIn', href: 'https://www.linkedin.com/in/deepak-kum
               High-performance web experiences at the intersection of design and engineering — reactive UIs to distributed systems.
             </p>
             <div style={{ display:'flex', gap:14, marginTop:36, pointerEvents:'all' }}>
-              <button style={{ padding:'11px 30px', background:'#00ffcc', color:'#000814', border:'none', borderRadius:2, fontFamily:'var(--font-mono)', fontSize:'0.72rem', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', cursor:'none', boxShadow:'0 0 28px rgba(0,255,204,0.28)', transition:'transform 0.15s, box-shadow 0.15s' }}
+              <button 
+                onClick={goProjects}
+                style={{ padding:'11px 30px', background:'#00ffcc', color:'#000814', border:'none', borderRadius:2, fontFamily:'var(--font-mono)', fontSize:'0.72rem', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', cursor:'none', boxShadow:'0 0 28px rgba(0,255,204,0.28)', transition:'transform 0.15s, box-shadow 0.15s' }}
                 onMouseEnter={e => { const b=e.currentTarget; b.style.transform='translateY(-2px)'; b.style.boxShadow='0 0 44px rgba(0,255,204,0.5)'; }}
                 onMouseLeave={e => { const b=e.currentTarget; b.style.transform=''; b.style.boxShadow='0 0 28px rgba(0,255,204,0.28)'; }}
               >View Projects</button>
@@ -649,6 +656,12 @@ id: 'linkedIn', label: 'LinkedIn', href: 'https://www.linkedin.com/in/deepak-kum
 
       {/* ── About overlay ── */}
       {view === 'about' && <AboutPage onBack={goHome} />}
+
+      {/* ── Skills overlay ── */}
+      {view === 'skills' && <SkillsPage onBack={goHome} />}
+
+      {/* ── Projects overlay ── */}
+      {view === 'projects' && <ProjectsPage onBack={goHome} />}
 
       <style>{`
         * { cursor: none !important; }
